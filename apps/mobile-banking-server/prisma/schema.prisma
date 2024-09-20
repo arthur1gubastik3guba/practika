@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  accountNumber String?
+  accountType   EnumAccountAccountType?
+  balance       Float?
+  cards         Card[]
+  createdAt     DateTime                @default(now())
+  customer      Customer?               @relation(fields: [customerId], references: [id])
+  customerId    String?
+  id            String                  @id @default(cuid())
+  transactions  Transaction[]
+  updatedAt     DateTime                @updatedAt
+}
+
+model Customer {
+  accounts    Account[]
+  address     String?
+  birthdate   DateTime?
+  createdAt   DateTime  @default(now())
+  email       String?
+  fullName    String?
+  id          String    @id @default(cuid())
+  phoneNumber String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Transaction {
+  account         Account?                        @relation(fields: [accountId], references: [id])
+  accountId       String?
+  amount          Float?
+  createdAt       DateTime                        @default(now())
+  id              String                          @id @default(cuid())
+  timestamp       DateTime?
+  transactionType EnumTransactionTransactionType?
+  updatedAt       DateTime                        @updatedAt
+}
+
+model Card {
+  account        Account?          @relation(fields: [accountId], references: [id])
+  accountId      String?
+  cardNumber     String?
+  cardType       EnumCardCardType?
+  createdAt      DateTime          @default(now())
+  expirationDate DateTime?
+  id             String            @id @default(cuid())
+  updatedAt      DateTime          @updatedAt
+}
+
+enum EnumAccountAccountType {
+  Option1
+}
+
+enum EnumTransactionTransactionType {
+  Option1
+}
+
+enum EnumCardCardType {
+  Option1
+}
